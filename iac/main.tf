@@ -18,3 +18,10 @@ resource "aws_security_group" "good_example" {
     description = "Allow HTTPS outbound"
   }
 }
+
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"  # AMI de ejemplo
+  instance_type = "t2.micro"
+
+  vpc_security_group_ids = [aws_security_group.good_example.id]
+}
