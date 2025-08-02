@@ -1,3 +1,7 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
 resource "aws_security_group" "good_example" {
   name        = "secure_sg"
   description = "Security group with limited access"
@@ -6,7 +10,7 @@ resource "aws_security_group" "good_example" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["203.0.113.0/24"]  # Solo acceso desde IP segura
+    cidr_blocks = ["203.0.113.0/24"]
     description = "Allow SSH from trusted IP"
   }
 
@@ -19,9 +23,12 @@ resource "aws_security_group" "good_example" {
   }
 }
 
-resource "aws_instance" "web" {
-  ami           = "ami-0c55b159cbfafe1f0"  # AMI de ejemplo
-  instance_type = "t2.micro"
-
+resource "aws_instance" "example" {
+  ami                    = "ami-0c55b159cbfafe1f0" # AMI pública de ejemplo (Ubuntu)
+  instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.good_example.id]
+
+  tags = {
+    Name = "example-instance"
+  }
 }
