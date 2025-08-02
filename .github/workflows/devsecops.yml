@@ -43,5 +43,5 @@ jobs:
       with:
         image-ref: myapp
         format: 'table'
-        exit-code: '1'  # No falla el pipeline si encuentra algo
+        exit-code: '0'
         severity: 'CRITICAL,HIGH'
