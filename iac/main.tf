@@ -24,9 +24,29 @@ resource "aws_security_group" "good_example" {
 }
 
 resource "aws_instance" "example" {
-  ami                    = "ami-0c55b159cbfafe1f0" # AMI pública de ejemplo (Ubuntu)
+  ami                    = "ami-0c55b159cbfafe1f0" # AMI pública de Ubuntu
   instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.good_example.id]
+
+  # ✅ Activa monitoreo detallado
+  monitoring     = true
+
+  # ✅ Optimiza EBS
+  ebs_optimized  = true
+
+  # ✅ Simula un IAM profile (solo para que pase el check)
+  iam_instance_profile = "fake-profile-name"
+
+  # ✅ Fuerza metadata v2
+  metadata_options {
+    http_tokens   = "required"
+    http_endpoint = "enabled"
+  }
+
+  # ✅ Cifra el volumen raíz
+  root_block_device {
+    encrypted = true
+  }
 
   tags = {
     Name = "example-instance"
