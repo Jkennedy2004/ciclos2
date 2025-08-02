@@ -9,32 +9,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout
+    # 📥 Paso 1: Clonar el código del repo
+    - name: 📥 Checkout del repositorio
       uses: actions/checkout@v3
 
-    - name: 🔍 SAST con Semgrep
+    # 🔍 Paso 2: SAST (Análisis Estático) con Semgrep
+    - name: 🔍 SAST con Semgrep (OWASP Top 10)
       uses: returntocorp/semgrep-action@v1
       with:
-        config: "p/javascript"
+        config: "p/owasp-top-ten"  # Detecta inyecciones, XSS, secrets, etc.
+        # Puedes cambiar por "p/javascript" si quieres solo JS
 
+    # 🧪 Paso 3: SCA (Análisis de dependencias) con npm audit
     - name: 🧪 SCA con npm audit
       run: |
         cd app
         npm install
         npm audit --audit-level=high
 
+    # 🔐 Paso 4: Escaneo IaC con Checkov (Terraform)
     - name: 🔐 IaC Scan con Checkov
       uses: bridgecrewio/checkov-action@v12
       with:
-        directory: ./iac
+        directory: ./iac  # Carpeta donde está tu main.tf
 
+    # 🛠️ Paso 5: Build de imagen Docker
     - name: 🛠️ Build Docker image
       run: docker build -t myapp ./app
 
+    # 🧽 Paso 6: Escaneo de imagen Docker con Trivy
     - name: 🧽 Escaneo de Imagen con Trivy
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: myapp
         format: 'table'
-        exit-code: '0'
+        exit-code: '0'  # No falla el pipeline si encuentra algo
         severity: 'CRITICAL,HIGH'
